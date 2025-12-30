@@ -1,103 +1,413 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEE</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JEE Study Tracker</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:19px}
-header{padding:26px;text-align:center;font-size:30px;font-weight:600;background:#a5b4fc;border-radius:0 0 34px 34px}
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  background:#f5f7fb;
+  color:#1f2937;
+}
+header{
+  padding:26px;
+  text-align:center;
+  font-size:30px;
+  font-weight:600;
+  background:#a5b4fc;
+  border-radius:0 0 34px 34px;
+}
 .container{padding:22px}
-.card{background:#ffffff;border-radius:30px;padding:22px;margin-bottom:26px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
-.subject-row{display:flex;gap:18px;margin:24px 0}
-.subject-row button{flex:1;padding:20px;font-size:22px;border:none;border-radius:34px;font-weight:600;cursor:pointer}
+.card{
+  background:white;
+  border-radius:30px;
+  padding:22px;
+  margin-bottom:26px;
+  box-shadow:0 14px 34px rgba(0,0,0,.08)
+}
+.subject-row{
+  display:flex;
+  gap:16px;
+  margin:24px 0;
+}
+.subject-row button{
+  flex:1;
+  padding:18px;
+  font-size:20px;
+  border:none;
+  border-radius:30px;
+  font-weight:600;
+  cursor:pointer;
+}
 .physics{background:#c7d2fe}
 .chemistry{background:#bbf7d0}
-.math{background:#e9d5ff}
-.progress{height:18px;background:#e5e7eb;border-radius:12px;overflow:hidden;margin-top:10px}
-.progress div{height:100%;background:#6366f1;width:0%}
+.maths{background:#e9d5ff}
+
+.progress{
+  height:18px;
+  background:#e5e7eb;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:10px
+}
+.progress div{
+  height:100%;
+  background:#6366f1;
+  width:0%
+}
+
+.section-title{
+  font-weight:600;
+  font-size:22px;
+  margin:18px 0 10px
+}
+
+input{
+  width:100%;
+  padding:16px;
+  font-size:18px;
+  border-radius:22px;
+  border:1px solid #d1d5db;
+  margin-top:10px
+}
+
+.chapter-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  margin:14px 0
+}
+.chapter-row span{font-size:18px}
+.chapter-row input{
+  width:24px;
+  height:24px;
+  accent-color:#6366f1
+}
+
+button{
+  cursor:pointer;
+  font-family:inherit;
+}
+
+.big-reset{
+  width:100%;
+  padding:20px;
+  font-size:20px;
+  border-radius:32px;
+  border:none;
+  background:linear-gradient(135deg,#fb7185,#f43f5e);
+  color:white;
+  font-weight:600;
+}
+
 .hidden{display:none}
-input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid #d1d5db;margin:14px 0}
-.section-title{font-weight:600;font-size:22px;margin:18px 0 10px}
-.big-reset{width:100%;padding:22px;font-size:22px;border-radius:36px;border:none;background:linear-gradient(135deg,#fb7185,#f43f5e);color:white;font-weight:600;cursor:pointer;margin-top:28px}
-.back-btn{margin-top:26px;padding:18px;font-size:20px;border-radius:30px;border:none;background:#c7d2fe;cursor:pointer;width:100%}
-.chapter-row{display:grid;grid-template-columns:1fr auto;align-items:center;margin:14px 0}
-.chapter-row span{font-size:20px}
-.chapter-row input{width:26px;height:26px;border-radius:8px;accent-color:#6366f1}
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.menu{font-size:26px;cursor:pointer;padding:6px}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:10}
-.modal-box{background:white;border-radius:28px;padding:22px;width:90%;max-width:420px}
-.modal h3{margin-top:0}
-.modal button{margin-top:12px;padding:14px;font-size:18px;border-radius:22px;border:none;cursor:pointer;width:100%}
-.remove-list{max-height:300px;overflow:auto;margin-top:10px}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+.menu{
+  font-size:28px;
+  cursor:pointer;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10
+}
+.modal-box{
+  background:white;
+  border-radius:26px;
+  padding:22px;
+  width:90%;
+  max-width:420px
+}
+.modal-box h3{margin-top:0}
+.modal-box button{
+  width:100%;
+  margin-top:10px;
+  padding:14px;
+  font-size:18px;
+  border-radius:20px;
+  border:none
+}
+.menu-btn{background:#e5e7eb}
+.danger{background:#fb7185;color:white}
+
+.small-btn{
+  padding:10px;
+  font-size:16px;
+  border:none;
+  border-radius:18px;
+  background:#6366f1;
+  color:white;
+  margin-top:10px
+}
 </style>
 </head>
+
 <body>
-<header>📘 JEE Study Tracker</header><div class="container" id="home"><div class="card">
-<div class="section-title">🎯 Daily Goals</div>
-<input id="goalInput" placeholder="Type chapter name">
-<div id="dailyGoals"></div>
-</div><div class="card">
-<b>⚡ Physics</b>
-<div class="progress"><div id="pBar"></div></div>
-<div id="pText"></div>
-<button onclick="resetSubject('physics')">Reset Physics</button>
-</div><div class="card">
-<b>🧪 Chemistry</b>
-<div class="progress"><div id="cBar"></div></div>
-<div id="cText"></div>
-<button onclick="resetSubject('chemistry')">Reset Chemistry</button>
-</div><div class="card">
-<b>📐 Mathematics</b>
-<div class="progress"><div id="mBar"></div></div>
-<div id="mText"></div>
-<button onclick="resetSubject('maths')">Reset Maths</button>
-</div><div class="subject-row">
-<button class="physics" onclick="openSub('physics')">⚡ Physics</button>
-<button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
-<button class="math" onclick="openSub('maths')">📐 Maths</button>
-</div><button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
+
+<header>📘 JEE Study Tracker</header>
+
+<!-- HOME -->
+<div class="container" id="home">
+
+  <div class="card">
+    <div class="section-title">🎯 Daily Goals</div>
+    <input id="goalInput" placeholder="Type chapter & press Enter"/>
+    <div id="dailyGoals"></div>
+  </div>
+
+  <div class="card">
+    <b>⚡ Physics</b>
+    <div class="progress"><div id="pBar"></div></div>
+    <div id="pText"></div>
+  </div>
+
+  <div class="card">
+    <b>🧪 Chemistry</b>
+    <div class="progress"><div id="cBar"></div></div>
+    <div id="cText"></div>
+  </div>
+
+  <div class="card">
+    <b>📐 Mathematics</b>
+    <div class="progress"><div id="mBar"></div></div>
+    <div id="mText"></div>
+  </div>
+
+  <div class="subject-row">
+    <button class="physics" onclick="openSub('physics')">⚡ Physics</button>
+    <button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
+    <button class="maths" onclick="openSub('maths')">📐 Maths</button>
+  </div>
+
+  <button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
+</div>
+
+<!-- SUBJECT -->
+<div class="container hidden" id="subject">
+  <div class="top-bar">
+    <h2 id="subTitle"></h2>
+    <div class="menu" onclick="openMenu()">⋮</div>
+  </div>
+  <div id="chapters"></div>
+  <button class="small-btn" onclick="goHome()">⬅ Back</button>
+</div>
+
+<!-- MENU MODAL -->
+<div class="modal hidden" id="menuModal">
+  <div class="modal-box">
+    <button class="menu-btn" onclick="openAdd()">➕ Add Chapter</button>
+    <button class="menu-btn" onclick="openRemove()">❌ Remove Chapters</button>
+    <button class="danger" onclick="resetSubject()">♻ Reset Subject</button>
+    <button onclick="closeModals()">Cancel</button>
+  </div>
+</div>
+
+<!-- ADD -->
+<div class="modal hidden" id="addModal">
+  <div class="modal-box">
+    <h3>Add Chapter</h3>
+    <input id="addInput" placeholder="Chapter name"/>
+    <button onclick="confirmAdd()">Add</button>
+    <button onclick="closeModals()">Cancel</button>
+  </div>
+</div>
+
+<!-- REMOVE -->
+<div class="modal hidden" id="removeModal">
+  <div class="modal-box">
+    <h3>Remove Chapters</h3>
+    <div id="removeList"></div>
+    <button class="danger" onclick="confirmRemove()">Remove Selected</button>
+    <button onclick="closeModals()">Cancel</button>
+  </div>
+</div>
 
 <script>
-const defaultData={
-physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","Magnetic Effect of Current","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
-chemistry:["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry"],
-maths:["Logarithm","Trigonometric Ratios & Identities","Quadratic Equation","Sequence & Series","Trigonometric Equation","Properties of Triangles","Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR","Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)","AOD","Indefinite Integration","Definite Integration","Area Under Curve","Differential Equation","Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"]};
+/* ---------- DATA ---------- */
 
-let data=JSON.parse(localStorage.getItem('chaptersData'))||defaultData;
-let daily=JSON.parse(localStorage.getItem('dailyGoals'))||{physics:[],chemistry:[],maths:[]};
-let currentSub="";
+const DEFAULT_DATA = {
+physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular Motion","WPE","COM","Rotation","Gravitation","SHM","Thermodynamics","Waves","Electrostatics","Current","Magnetism","EMI","AC","Optics","Modern Physics"],
+chemistry:["Mole Concept","Atomic Structure","Thermodynamics","Equilibrium","Redox","Electrochemistry","Periodic Table","Bonding","GOC","Hydrocarbons"],
+maths:["Quadratic","Sequence & Series","Trigonometry","Straight Line","Circle","Conics","Limits","Derivatives","Integrals","Vectors","3D","Probability"]
+};
 
-function save(){localStorage.setItem('chaptersData',JSON.stringify(data));localStorage.setItem('dailyGoals',JSON.stringify(daily))}
+let data = JSON.parse(localStorage.getItem("data")) || DEFAULT_DATA;
+let daily = JSON.parse(localStorage.getItem("daily")) || {physics:[],chemistry:[],maths:[]};
+let currentSub = "";
 
-function openSub(s){currentSub=s;home.classList.add('hidden');subject.classList.remove('hidden');subTitle.innerText=s.toUpperCase();renderChapters()}
+/* ---------- HELPERS ---------- */
 
-function renderChapters(){const box=document.getElementById('chapters');box.innerHTML="";data[currentSub].forEach(ch=>{const row=document.createElement('div');row.className='chapter-row';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch)==='1';cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};row.append(name,cb);box.append(row)})}
+const $ = id => document.getElementById(id);
 
-function openMenu(){document.getElementById('addModal').classList.remove('hidden');}
-function closeModals(){addModal.classList.add('hidden');removeModal.classList.add('hidden')}
+function save(){
+  localStorage.setItem("data",JSON.stringify(data));
+  localStorage.setItem("daily",JSON.stringify(daily));
+}
 
-function confirmAdd(){const v=addInput.value.trim();if(!v)return;data[currentSub].push(v);addInput.value='';save();closeModals();renderChapters();updateProgress()}
+/* ---------- NAV ---------- */
 
-function openRemove(){removeList.innerHTML="";data[currentSub].forEach((ch,i)=>{const row=document.createElement('div');const cb=document.createElement('input');cb.type='checkbox';cb.dataset.index=i;row.append(cb,ch);removeList.append(row)});removeModal.classList.remove('hidden')}
+function openSub(s){
+  currentSub=s;
+  $("home").classList.add("hidden");
+  $("subject").classList.remove("hidden");
+  $("subTitle").innerText=s.toUpperCase();
+  renderChapters();
+}
 
-function confirmRemove(){const checks=[...removeList.querySelectorAll('input:checked')].map(c=>+c.dataset.index).sort((a,b)=>b-a);checks.forEach(i=>data[currentSub].splice(i,1));save();closeModals();renderChapters();updateProgress()}
+function goHome(){
+  $("subject").classList.add("hidden");
+  $("home").classList.remove("hidden");
+  updateProgress();
+}
 
-function goHome(){subject.classList.add('hidden');home.classList.remove('hidden');updateProgress()}
+/* ---------- CHAPTERS ---------- */
 
-function updateProgress(){[['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{let done=0;data[s].forEach(c=>{if(localStorage.getItem(s+c)==='1')done++});let pct=Math.round(done/data[s].length*100)||0;document.getElementById(b).style.width=pct+'%';document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`})}
+function renderChapters(){
+  const box=$("chapters");
+  box.innerHTML="";
+  data[currentSub].forEach(ch=>{
+    const row=document.createElement("div");
+    row.className="chapter-row";
+    const name=document.createElement("span");
+    name.innerText=ch;
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.checked=localStorage.getItem(currentSub+ch)==="1";
+    cb.onchange=()=>{
+      localStorage.setItem(currentSub+ch,cb.checked?"1":"");
+      updateProgress();
+    };
+    row.append(name,cb);
+    box.append(row);
+  });
+}
 
-function resetSubject(s){data[s].forEach(c=>localStorage.removeItem(s+c));updateProgress()}
-function resetAll(){localStorage.clear();location.reload()}
+/* ---------- MENU ---------- */
 
-// DAILY GOALS IMPROVED
+function openMenu(){ $("menuModal").classList.remove("hidden"); }
+function openAdd(){ closeModals(); $("addModal").classList.remove("hidden"); }
+function openRemove(){
+  closeModals();
+  const list=$("removeList");
+  list.innerHTML="";
+  data[currentSub].forEach((c,i)=>{
+    const row=document.createElement("div");
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.dataset.i=i;
+    row.append(cb," ",c);
+    list.append(row);
+  });
+  $("removeModal").classList.remove("hidden");
+}
+function closeModals(){
+  ["menuModal","addModal","removeModal"].forEach(id=>$(id).classList.add("hidden"));
+}
 
-goalInput.oninput=function(){const v=this.value.toLowerCase();if(!v)return;Object.keys(data).forEach(s=>{data[s].filter(c=>c.toLowerCase().includes(v)&&!daily[s].includes(c)).forEach(c=>daily[s].push(c))});save();renderDaily()}
+/* ---------- ACTIONS ---------- */
 
-function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);daily[s].forEach((ch,i)=>{const row=document.createElement('div');row.className='chapter-row';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,'1');daily[s].splice(i,1);save();renderDaily();updateProgress()};row.append(name,cb);dailyGoals.append(row)})}})}
+function confirmAdd(){
+  const v=$("addInput").value.trim();
+  if(!v)return;
+  data[currentSub].push(v);
+  $("addInput").value="";
+  save(); closeModals(); renderChapters(); updateProgress();
+}
 
-renderDaily();updateProgress();
-</script></body>
+function confirmRemove(){
+  [...$("removeList").querySelectorAll("input:checked")]
+  .map(c=>+c.dataset.i)
+  .sort((a,b)=>b-a)
+  .forEach(i=>data[currentSub].splice(i,1));
+  save(); closeModals(); renderChapters(); updateProgress();
+}
+
+function resetSubject(){
+  if(!confirm("Reset all progress for this subject?"))return;
+  data[currentSub].forEach(c=>localStorage.removeItem(currentSub+c));
+  closeModals(); renderChapters(); updateProgress();
+}
+
+function resetAll(){
+  if(!confirm("This will erase EVERYTHING. Continue?"))return;
+  localStorage.clear();
+  location.reload();
+}
+
+/* ---------- PROGRESS ---------- */
+
+function updateProgress(){
+  [["physics","pBar","pText"],["chemistry","cBar","cText"],["maths","mBar","mText"]]
+  .forEach(([s,b,t])=>{
+    let done=0;
+    data[s].forEach(c=>localStorage.getItem(s+c)==="1"&&done++);
+    let pct=Math.round(done/data[s].length*100)||0;
+    $(b).style.width=pct+"%";
+    $(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`;
+  });
+}
+
+/* ---------- DAILY GOALS ---------- */
+
+$("goalInput").addEventListener("keydown",e=>{
+  if(e.key!=="Enter")return;
+  const v=e.target.value.toLowerCase();
+  if(!v)return;
+  Object.keys(data).forEach(s=>{
+    data[s].forEach(c=>{
+      if(c.toLowerCase().includes(v)&&!daily[s].includes(c))
+        daily[s].push(c);
+    });
+  });
+  e.target.value="";
+  save(); renderDaily();
+});
+
+function renderDaily(){
+  $("dailyGoals").innerHTML="";
+  Object.keys(daily).forEach(s=>{
+    if(!daily[s].length)return;
+    const title=document.createElement("div");
+    title.className="section-title";
+    title.innerText=s.toUpperCase();
+    $("dailyGoals").append(title);
+    daily[s].forEach((ch,i)=>{
+      const row=document.createElement("div");
+      row.className="chapter-row";
+      const name=document.createElement("span");
+      name.innerText=ch;
+      const cb=document.createElement("input");
+      cb.type="checkbox";
+      cb.onchange=()=>{
+        localStorage.setItem(s+ch,"1");
+        daily[s].splice(i,1);
+        save(); renderDaily(); updateProgress();
+      };
+      row.append(name,cb);
+      $("dailyGoals").append(row);
+    });
+  });
+}
+
+renderDaily();
+updateProgress();
+</script>
+</body>
 </html>
