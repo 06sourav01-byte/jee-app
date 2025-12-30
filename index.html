@@ -1,80 +1,238 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JEE</title>
-  <link rel="manifest" href="manifest.json" />
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6fb; }
-    header { background: #1e3a8a; color: white; padding: 16px; text-align: center; }
-    .container { padding: 16px; }
-    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    button { width: 100%; padding: 14px; margin: 8px 0; font-size: 18px; border: none; border-radius: 10px; color: white; }
-    .physics { background: #2563eb; }
-    .chemistry { background: #16a34a; }
-    .math { background: #7c3aed; }
-    .hidden { display: none; }
-    .chapter { display: flex; align-items: center; margin: 8px 0; }
-    .chapter input { width: 20px; height: 20px; margin-right: 12px; }
-    progress { width: 100%; height: 18px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --primary:#a5b4fc;
+  --physics:#bfdbfe;
+  --chem:#bbf7d0;
+  --math:#e9d5ff;
+  --bar:#6366f1;
+}
+
+.dark{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --text:#e5e7eb;
+  --bar:#818cf8;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:18px;
+}
+
+header{
+  padding:22px;
+  text-align:center;
+  font-size:26px;
+  font-weight:600;
+  background:var(--primary);
+  border-bottom-left-radius:28px;
+  border-bottom-right-radius:28px;
+}
+
+.container{padding:16px}
+
+.card{
+  background:var(--card);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+button{
+  width:100%;
+  padding:16px;
+  font-size:20px;
+  border:none;
+  border-radius:24px;
+  margin:10px 0;
+  font-weight:500;
+}
+
+.physics{background:var(--physics)}
+.chem{background:var(--chem)}
+.math{background:var(--math)}
+
+.progress-wrap{
+  margin-top:8px;
+}
+.progress{
+  height:16px;
+  background:#e5e7eb;
+  border-radius:12px;
+  overflow:hidden;
+}
+.progress div{
+  height:100%;
+  background:var(--bar);
+  width:0%;
+  transition:.4s;
+}
+
+.hidden{display:none}
+
+.chapter{
+  display:flex;
+  align-items:center;
+  margin:14px 0;
+}
+.chapter input{
+  width:22px;
+  height:22px;
+  margin-right:14px;
+  accent-color:var(--bar);
+}
+
+input[type="search"],input[type="number"]{
+  width:100%;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid #d1d5db;
+  font-size:18px;
+  margin-bottom:14px;
+}
+
+.toggle{
+  text-align:right;
+  font-size:14px;
+}
+</style>
 </head>
+
 <body>
-  <header>JEE – Study Tracker</header>  <div class="container" id="home">
-    <div class="card">
-      <p>Physics Progress</p>
-      <progress id="pProg" value="0" max="100"></progress>
-    </div>
-    <div class="card">
-      <p>Chemistry Progress</p>
-      <progress id="cProg" value="0" max="100"></progress>
-    </div>
-    <div class="card">
-      <p>Math Progress</p>
-      <progress id="mProg" value="0" max="100"></progress>
-    </div><button class="physics" onclick="openSub('physics')">Physics</button>
-<button class="chemistry" onclick="openSub('chemistry')">Chemistry</button>
-<button class="math" onclick="openSub('math')">Mathematics</button>
+<header>JEE Study Tracker</header>
 
-<button style="background:#dc2626" onclick="resetAll()">Reset Progress</button>
+<div class="container" id="home">
 
-  </div>  <div class="container hidden" id="subject">
-    <h2 id="subTitle"></h2>
-    <div id="chapters"></div>
-    <button style="background:#374151" onclick="goHome()">Back</button>
-  </div><script>
+  <div class="toggle">
+    <label>
+      🌙 Dark Mode
+      <input type="checkbox" onchange="toggleDark(this)">
+    </label>
+  </div>
+
+  <div class="card">
+    <b>🎯 Daily Goal (chapters)</b>
+    <input type="number" id="goal" placeholder="Set daily goal" onchange="saveGoal()">
+    <p id="goalStatus"></p>
+  </div>
+
+  <div class="card">
+    <b>Physics</b>
+    <div class="progress-wrap">
+      <div class="progress"><div id="pBar"></div></div>
+      <p id="pText"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <b>Chemistry</b>
+    <div class="progress-wrap">
+      <div class="progress"><div id="cBar"></div></div>
+      <p id="cText"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <b>Mathematics</b>
+    <div class="progress-wrap">
+      <div class="progress"><div id="mBar"></div></div>
+      <p id="mText"></p>
+    </div>
+  </div>
+
+  <button class="physics" onclick="openSub('physics')">Physics</button>
+  <button class="chem" onclick="openSub('chemistry')">Chemistry</button>
+  <button class="math" onclick="openSub('maths')">Mathematics</button>
+
+  <button style="background:#fecaca" onclick="resetAll()">Reset Progress</button>
+</div>
+
+<div class="container hidden" id="subject">
+  <input type="search" id="search" placeholder="Search chapter..." oninput="filterChapters()">
+  <h2 id="title"></h2>
+  <div id="chapters"></div>
+  <button onclick="goHome()">⬅ Back</button>
+</div>
+
+<script>
 const data = {
-  physics: ['Kinematics','Laws of Motion','Work Energy Power'],
-  chemistry: ['Atomic Structure','Thermodynamics','Equilibrium'],
-  math: ['Limits','Derivatives','Integrals']
+physics: ["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","Magnetic Effect of Current","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
+chemistry: ["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry"],
+maths: ["Logarithm","Trigonometric Ratios & Identities","Quadratic Equation","Sequence & Series","Trigonometric Equation","Properties of Triangles","Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR","Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)","AOD","Indefinite Integration","Definite Integration","Area Under Curve","Differential Equation","Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"]
 };
 
-function openSub(sub){
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('subject').classList.remove('hidden');
-  document.getElementById('subTitle').innerText = sub.toUpperCase();
-  const box = document.getElementById('chapters'); box.innerHTML='';
-  data[sub].forEach(ch=>{
-    const div = document.createElement('div'); div.className='chapter';
-    const cb = document.createElement('input'); cb.type='checkbox';
-    cb.checked = localStorage.getItem(sub+ch)==='1';
-    cb.onchange=()=>{ localStorage.setItem(sub+ch, cb.checked?'1':'0'); updateProgress(); };
-    const label = document.createElement('span'); label.innerText = ch;
-    div.appendChild(cb); div.appendChild(label); box.appendChild(div);
+let currentSub="";
+
+function openSub(s){
+  currentSub=s;
+  home.classList.add("hidden");
+  subject.classList.remove("hidden");
+  title.innerText=s.toUpperCase();
+  render();
+}
+
+function render(){
+  chapters.innerHTML="";
+  const q=search.value.toLowerCase();
+  data[currentSub].filter(c=>c.toLowerCase().includes(q)).forEach(ch=>{
+    const d=document.createElement("div");
+    d.className="chapter";
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.checked=localStorage.getItem(currentSub+ch)==="1";
+    cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?"1":"0");update()};
+    d.append(cb,ch);
+    chapters.append(d);
   });
 }
 
-function goHome(){ document.getElementById('subject').classList.add('hidden'); document.getElementById('home').classList.remove('hidden'); updateProgress(); }
+function filterChapters(){render()}
+function goHome(){subject.classList.add("hidden");home.classList.remove("hidden");update()}
 
-function updateProgress(){
-  ['physics','chemistry','math'].forEach((s,i)=>{
-    let done=0; data[s].forEach(ch=>{ if(localStorage.getItem(s+ch)==='1') done++; });
-    let pct = Math.round(done/data[s].length*100);
-    document.getElementById(['pProg','cProg','mProg'][i]).value=pct;
+function update(){
+  ["physics","chemistry","maths"].forEach((s,i)=>{
+    let done=0;
+    data[s].forEach(c=>{if(localStorage.getItem(s+c)==="1")done++});
+    let pct=Math.round(done/data[s].length*100);
+    [pBar,cBar,mBar][i].style.width=pct+"%";
+    [pText,cText,mText][i].innerText=`${done}/${data[s].length} chapters • ${pct}%`;
   });
+  checkGoal();
 }
 
-function resetAll(){ localStorage.clear(); updateProgress(); }
-updateProgress();
-</script></body>
+function resetAll(){localStorage.clear();update()}
+
+function toggleDark(t){document.body.classList.toggle("dark",t.checked)}
+
+function saveGoal(){localStorage.goal=goal.value;checkGoal()}
+function checkGoal(){
+  let g=+localStorage.goal||0;
+  let today=0;
+  ["physics","chemistry","maths"].forEach(s=>{
+    data[s].forEach(c=>{if(localStorage.getItem(s+c)==="1")today++});
+  });
+  goal.value=g||"";
+  goalStatus.innerText=g?`Completed ${today}/${g} chapters today`:"";
+}
+
+update();
+</script>
+</body>
 </html>
