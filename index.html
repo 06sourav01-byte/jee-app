@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JEE Study Tracker</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:19px}
 header{padding:26px;text-align:center;font-size:30px;font-weight:600;background:#a5b4fc;border-radius:0 0 34px 34px}
 .container{padding:22px}
-.card{background:#ffffff;border-radius:30px;padding:22px;margin-bottom:26px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
+.card{background:#fff;border-radius:30px;padding:22px;margin-bottom:26px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
 .subject-row{display:flex;gap:18px;margin:24px 0}
 .subject-row button{flex:1;padding:20px;font-size:22px;border:none;border-radius:34px;font-weight:600;cursor:pointer}
 .physics{background:#c7d2fe}
@@ -27,7 +28,7 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 .back-btn{margin-top:26px;padding:18px;font-size:20px;border-radius:30px;border:none;background:#c7d2fe;cursor:pointer;width:100%}
 .chapter-row{display:grid;grid-template-columns:1fr auto;align-items:center;margin:14px 0}
 .chapter-row span{font-size:20px}
-.chapter-row input{width:26px;height:26px;border-radius:8px;accent-color:#6366f1}
+.chapter-row input{width:26px;height:26px;accent-color:#6366f1}
 .reset-btn{margin-top:10px;padding:12px;border:none;border-radius:20px;background:#fee2e2;font-weight:500;cursor:pointer}
 </style>
 </head>
@@ -39,10 +40,8 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 
 <div class="card">
 <div class="section-title">🎯 Daily Goals</div>
-
-<input id="goalInput" list="chaptersList" placeholder="Type chapter name">
+<input id="goalInput" list="chaptersList" placeholder="Type chapter & press Enter">
 <datalist id="chaptersList"></datalist>
-
 <div id="dailyGoals"></div>
 </div>
 
@@ -73,6 +72,11 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 <button class="math" onclick="openSub('maths')">📐 Maths</button>
 </div>
 
+<div class="card">
+<div class="section-title">📊 Subject Wise Completion</div>
+<canvas id="progressChart" height="220"></canvas>
+</div>
+
 <button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
 </div>
 
@@ -83,14 +87,16 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 </div>
 
 <script>
+// ================= DATA =================
 const data = {
 physics:[
-"U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion",
-"WPE","Center of Mass","Rotational Mech.","Gravitation","SHM","Calorimetry","Elasticity",
-"Thermal Exp.","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves",
-"Fluid Mechanics","Physical World","Electrostatics","Current Elec.","Capacitance","MEC",
-"Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity",
-"Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Comm. System"
+"U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE",
+"Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity",
+"Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves",
+"Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance",
+"MEC","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics",
+"Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor",
+"Communication System"
 ],
 chemistry:[
 "General Chemistry","Atomic Structure","States of Matter","Thermodynamics",
@@ -99,23 +105,28 @@ chemistry:[
 "Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry",
 "Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements",
 "Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC",
-"Isomerism","Hydrocarbons","Environmental Chemistry"
+"Isomerism","Hydrocarbons","Environmental Chemistry","Optical Isomerism",
+"Halogen Derivative","Alcohol, Phenol, Ether","Aldehydes, Ketones",
+"Carboxylic Acids & Amines","Biomolecules","Polymers","Oxidation Reduction",
+"Chem. in Everyday Life"
 ],
 maths:[
-"Logarithm","Trigo Ratios & Ids.","Quad. Equation","Seq. & Series","Trigo Equation",
-"Prop. of Triangles","Height and Dist.","Point","Straight Line","Circle","Parabola",
-"Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR",
-"Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)",
-"AOD","Indef. Integration","Def. Integration","Area Under Curve","Differential Eqn.",
-"Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"
+"Logarithm","Trigonometric Ratios & Identities","Quadratic Equation",
+"Sequence & Series","Trigonometric Equation","Properties of Triangles",
+"Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse",
+"Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR",
+"Sets","Relation","Function","ITF","Limit","Continuity","Differentiability",
+"MOD (Diff.)","AOD","Indefinite Integration","Definite Integration",
+"Area Under Curve","Differential Equation","Matrices","Determinant","Vectors",
+"3-Dimensional","Probability","Linear Programming"
 ]
 };
 
 let daily = JSON.parse(localStorage.getItem("dailyGoals")) || {physics:[],chemistry:[],maths:[]};
 let currentSub = "";
+let chart;
 
-function save(){localStorage.setItem("dailyGoals",JSON.stringify(daily));}
-
+// ================= SUBJECT =================
 function openSub(s){
 currentSub=s;
 home.classList.add("hidden");
@@ -124,100 +135,148 @@ subTitle.innerText=s.toUpperCase();
 renderChapters();
 }
 
-function renderChapters(){
-chapters.innerHTML="";
-data[currentSub].forEach(ch=>{
-const row=document.createElement("div");
-row.className="chapter-row";
-const name=document.createElement("span");
-name.innerText=ch;
-const cb=document.createElement("input");
-cb.type="checkbox";
-cb.checked=localStorage.getItem(currentSub+ch)==="1";
-cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?"1":"");updateProgress();}
-row.append(name,cb);
-chapters.append(row);
-});
-}
-
 function goHome(){
 subject.classList.add("hidden");
 home.classList.remove("hidden");
 updateProgress();
 }
 
-function updateProgress(){
-[["physics","pBar","pText"],["chemistry","cBar","cText"],["maths","mBar","mText"]]
-.forEach(([s,b,t])=>{
-let done=0;
-data[s].forEach(c=>{if(localStorage.getItem(s+c)==="1")done++;});
-let pct=Math.round(done/data[s].length*100)||0;
-document.getElementById(b).style.width=pct+"%";
-document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`;
+// ================= CHAPTERS =================
+function renderChapters(){
+chapters.innerHTML="";
+data[currentSub].forEach((ch,i)=>{
+const row=document.createElement("div");
+row.className="chapter-row";
+
+const name=document.createElement("span");
+name.innerText=`${i+1}. ${ch}`;
+
+const cb=document.createElement("input");
+cb.type="checkbox";
+cb.checked=localStorage.getItem(currentSub+ch)==="1";
+cb.onchange=()=>{
+localStorage.setItem(currentSub+ch,cb.checked?"1":"");
+updateProgress();
+};
+
+row.append(name,cb);
+chapters.append(row);
 });
 }
 
+// ================= PROGRESS =================
+function getPercent(s){
+let done=0;
+data[s].forEach(c=>{if(localStorage.getItem(s+c)==="1")done++;});
+return Math.round((done/data[s].length)*100)||0;
+}
+
+function updateProgress(){
+pBar.style.width=getPercent("physics")+"%";
+cBar.style.width=getPercent("chemistry")+"%";
+mBar.style.width=getPercent("maths")+"%";
+
+pText.innerText=`${getPercent("physics")}% completed`;
+cText.innerText=`${getPercent("chemistry")}% completed`;
+mText.innerText=`${getPercent("maths")}% completed`;
+
+renderChart();
+}
+
 function resetSubject(s){
-if(!confirm("Are you sure you want to reset your progress?")) return;
+if(!confirm("Are you sure you want to reset your progress?"))return;
 data[s].forEach(c=>localStorage.removeItem(s+c));
 updateProgress();
 }
 
 function resetAll(){
-if(!confirm("Are you sure you want to reset your progress?")) return;
+if(!confirm("Are you sure you want to reset your progress?"))return;
 localStorage.clear();
 location.reload();
 }
 
-goalInput.onchange=function(){
-const v=this.value;
-Object.keys(data).forEach(s=>{
-if(data[s].includes(v)&&!daily[s].includes(v)) daily[s].push(v);
-});
-this.value="";
-save();
+// ================= DAILY GOALS =================
+goalInput.addEventListener("keydown",e=>{
+if(e.key!=="Enter")return;
+const v=goalInput.value.trim();
+if(!v)return;
+
+let sub=null;
+Object.keys(data).forEach(s=>{if(data[s].includes(v))sub=s;});
+if(!sub)return alert("Chapter not found");
+
+if(!daily[sub].includes(v)) daily[sub].push(v);
+localStorage.setItem("dailyGoals",JSON.stringify(daily));
+goalInput.value="";
 renderDaily();
-};
+});
 
 function renderDaily(){
 dailyGoals.innerHTML="";
 Object.keys(daily).forEach(s=>{
-if(daily[s].length){
+if(!daily[s].length)return;
+
 const title=document.createElement("div");
 title.className="section-title";
 title.innerText=s.toUpperCase();
 dailyGoals.append(title);
+
 daily[s].forEach((ch,i)=>{
 const row=document.createElement("div");
 row.className="chapter-row";
+
 const name=document.createElement("span");
 name.innerText=ch;
+
 const cb=document.createElement("input");
 cb.type="checkbox";
 cb.onchange=()=>{
 localStorage.setItem(s+ch,"1");
 daily[s].splice(i,1);
-save();renderDaily();updateProgress();
+localStorage.setItem("dailyGoals",JSON.stringify(daily));
+renderDaily();
+updateProgress();
 };
+
 row.append(name,cb);
 dailyGoals.append(row);
 });
+});
+}
+
+// ================= CHART =================
+function renderChart(){
+const ctx=document.getElementById("progressChart");
+if(chart)chart.destroy();
+
+chart=new Chart(ctx,{
+type:"bar",
+data:{
+labels:["Physics","Chemistry","Maths"],
+datasets:[{
+data:[getPercent("physics"),getPercent("chemistry"),getPercent("maths")],
+backgroundColor:["#6366f1","#22c55e","#a855f7"],
+borderRadius:12
+}]
+},
+options:{
+plugins:{legend:{display:false}},
+scales:{y:{beginAtZero:true,max:100}}
 }
 });
 }
 
-function fillDatalist(){
+// ================= INIT =================
+(function(){
 const dl=document.getElementById("chaptersList");
 Object.values(data).flat().forEach(ch=>{
-const opt=document.createElement("option");
-opt.value=ch;
-dl.append(opt);
+const o=document.createElement("option");
+o.value=ch;
+dl.append(o);
 });
-}
-
-fillDatalist();
 renderDaily();
 updateProgress();
+})();
 </script>
 </body>
 </html>
