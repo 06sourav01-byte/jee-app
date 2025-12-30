@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JEE Study Tracker</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@ header{
 }
 .container{padding:22px}
 .card{
-  background:white;
+  background:#fff;
   border-radius:30px;
   padding:22px;
   margin-bottom:26px;
@@ -34,7 +34,7 @@ header{
 .subject-row{
   display:flex;
   gap:16px;
-  margin:24px 0;
+  margin:24px 0
 }
 .subject-row button{
   flex:1;
@@ -43,7 +43,6 @@ header{
   border:none;
   border-radius:30px;
   font-weight:600;
-  cursor:pointer;
 }
 .physics{background:#c7d2fe}
 .chemistry{background:#bbf7d0}
@@ -90,6 +89,19 @@ input{
   accent-color:#6366f1
 }
 
+.hidden{display:none}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+.menu{
+  font-size:28px;
+  cursor:pointer;
+}
+
 button{
   cursor:pointer;
   font-family:inherit;
@@ -106,19 +118,7 @@ button{
   font-weight:600;
 }
 
-.hidden{display:none}
-
-.top-bar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px
-}
-.menu{
-  font-size:28px;
-  cursor:pointer;
-}
-
+/* MODALS */
 .modal{
   position:fixed;
   inset:0;
@@ -126,7 +126,7 @@ button{
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:10
+  z-index:20
 }
 .modal-box{
   background:white;
@@ -135,7 +135,6 @@ button{
   width:90%;
   max-width:420px
 }
-.modal-box h3{margin-top:0}
 .modal-box button{
   width:100%;
   margin-top:10px;
@@ -146,15 +145,15 @@ button{
 }
 .menu-btn{background:#e5e7eb}
 .danger{background:#fb7185;color:white}
-
 .small-btn{
-  padding:10px;
+  padding:12px;
   font-size:16px;
   border:none;
-  border-radius:18px;
+  border-radius:20px;
   background:#6366f1;
   color:white;
-  margin-top:10px
+  margin-top:18px;
+  width:100%
 }
 </style>
 </head>
@@ -165,10 +164,9 @@ button{
 
 <!-- HOME -->
 <div class="container" id="home">
-
   <div class="card">
     <div class="section-title">🎯 Daily Goals</div>
-    <input id="goalInput" placeholder="Type chapter & press Enter"/>
+    <input id="goalInput" placeholder="Type chapter & press Enter">
     <div id="dailyGoals"></div>
   </div>
 
@@ -191,9 +189,9 @@ button{
   </div>
 
   <div class="subject-row">
-    <button class="physics" onclick="openSub('physics')">⚡ Physics</button>
-    <button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
-    <button class="maths" onclick="openSub('maths')">📐 Maths</button>
+    <button class="physics" onclick="openSubject('physics')">⚡ Physics</button>
+    <button class="chemistry" onclick="openSubject('chemistry')">🧪 Chemistry</button>
+    <button class="maths" onclick="openSubject('maths')">📐 Maths</button>
   </div>
 
   <button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
@@ -206,7 +204,7 @@ button{
     <div class="menu" onclick="openMenu()">⋮</div>
   </div>
   <div id="chapters"></div>
-  <button class="small-btn" onclick="goHome()">⬅ Back</button>
+  <button class="small-btn" onclick="goHome()">⬅ Back to Home</button>
 </div>
 
 <!-- MENU MODAL -->
@@ -219,17 +217,17 @@ button{
   </div>
 </div>
 
-<!-- ADD -->
+<!-- ADD MODAL -->
 <div class="modal hidden" id="addModal">
   <div class="modal-box">
     <h3>Add Chapter</h3>
-    <input id="addInput" placeholder="Chapter name"/>
+    <input id="addInput" placeholder="Chapter name">
     <button onclick="confirmAdd()">Add</button>
     <button onclick="closeModals()">Cancel</button>
   </div>
 </div>
 
-<!-- REMOVE -->
+<!-- REMOVE MODAL -->
 <div class="modal hidden" id="removeModal">
   <div class="modal-box">
     <h3>Remove Chapters</h3>
@@ -240,44 +238,47 @@ button{
 </div>
 
 <script>
-/* ---------- DATA ---------- */
+/* ================= DATA ================= */
 
-const DEFAULT_DATA = {
-physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular Motion","WPE","COM","Rotation","Gravitation","SHM","Thermodynamics","Waves","Electrostatics","Current","Magnetism","EMI","AC","Optics","Modern Physics"],
-chemistry:["Mole Concept","Atomic Structure","Thermodynamics","Equilibrium","Redox","Electrochemistry","Periodic Table","Bonding","GOC","Hydrocarbons"],
+const DEFAULT_DATA={
+physics:["Vectors","Kinematics","NLM","Work Power Energy","Rotation","Gravitation","Thermodynamics","Waves","Electrostatics","Current Electricity","Magnetism","Optics","Modern Physics"],
+chemistry:["Mole Concept","Atomic Structure","Thermodynamics","Equilibrium","Electrochemistry","Periodic Table","Chemical Bonding","GOC","Hydrocarbons"],
 maths:["Quadratic","Sequence & Series","Trigonometry","Straight Line","Circle","Conics","Limits","Derivatives","Integrals","Vectors","3D","Probability"]
 };
 
-let data = JSON.parse(localStorage.getItem("data")) || DEFAULT_DATA;
-let daily = JSON.parse(localStorage.getItem("daily")) || {physics:[],chemistry:[],maths:[]};
-let currentSub = "";
+let data=JSON.parse(localStorage.getItem("jeeData"))||DEFAULT_DATA;
+let daily=JSON.parse(localStorage.getItem("jeeDaily"))||{physics:[],chemistry:[],maths:[]};
+let currentSub=null;
 
-/* ---------- HELPERS ---------- */
+const $=id=>document.getElementById(id);
 
-const $ = id => document.getElementById(id);
+/* ================= INIT ================= */
 
-function save(){
-  localStorage.setItem("data",JSON.stringify(data));
-  localStorage.setItem("daily",JSON.stringify(daily));
-}
+window.addEventListener("load",()=>{
+  closeModals();
+  updateProgress();
+  renderDaily();
+});
 
-/* ---------- NAV ---------- */
+/* ================= NAV ================= */
 
-function openSub(s){
-  currentSub=s;
+function openSubject(sub){
+  currentSub=sub;
   $("home").classList.add("hidden");
   $("subject").classList.remove("hidden");
-  $("subTitle").innerText=s.toUpperCase();
+  $("subTitle").innerText=sub.toUpperCase();
   renderChapters();
 }
 
 function goHome(){
+  currentSub=null;
   $("subject").classList.add("hidden");
   $("home").classList.remove("hidden");
+  closeModals();
   updateProgress();
 }
 
-/* ---------- CHAPTERS ---------- */
+/* ================= CHAPTERS ================= */
 
 function renderChapters(){
   const box=$("chapters");
@@ -299,36 +300,48 @@ function renderChapters(){
   });
 }
 
-/* ---------- MENU ---------- */
+/* ================= MENU ================= */
 
-function openMenu(){ $("menuModal").classList.remove("hidden"); }
-function openAdd(){ closeModals(); $("addModal").classList.remove("hidden"); }
+function openMenu(){
+  if(!currentSub) return;
+  $("menuModal").classList.remove("hidden");
+}
+
+function openAdd(){
+  closeModals();
+  $("addModal").classList.remove("hidden");
+}
+
 function openRemove(){
   closeModals();
   const list=$("removeList");
   list.innerHTML="";
-  data[currentSub].forEach((c,i)=>{
+  data[currentSub].forEach((ch,i)=>{
     const row=document.createElement("div");
     const cb=document.createElement("input");
     cb.type="checkbox";
     cb.dataset.i=i;
-    row.append(cb," ",c);
+    row.append(cb," ",ch);
     list.append(row);
   });
   $("removeModal").classList.remove("hidden");
 }
+
 function closeModals(){
   ["menuModal","addModal","removeModal"].forEach(id=>$(id).classList.add("hidden"));
 }
 
-/* ---------- ACTIONS ---------- */
+/* ================= ACTIONS ================= */
 
 function confirmAdd(){
   const v=$("addInput").value.trim();
-  if(!v)return;
+  if(!v) return;
   data[currentSub].push(v);
   $("addInput").value="";
-  save(); closeModals(); renderChapters(); updateProgress();
+  save();
+  closeModals();
+  renderChapters();
+  updateProgress();
 }
 
 function confirmRemove(){
@@ -336,54 +349,47 @@ function confirmRemove(){
   .map(c=>+c.dataset.i)
   .sort((a,b)=>b-a)
   .forEach(i=>data[currentSub].splice(i,1));
-  save(); closeModals(); renderChapters(); updateProgress();
+  save();
+  closeModals();
+  renderChapters();
+  updateProgress();
 }
 
 function resetSubject(){
-  if(!confirm("Reset all progress for this subject?"))return;
+  if(!confirm("Reset all progress for this subject?")) return;
   data[currentSub].forEach(c=>localStorage.removeItem(currentSub+c));
-  closeModals(); renderChapters(); updateProgress();
+  closeModals();
+  renderChapters();
+  updateProgress();
 }
 
 function resetAll(){
-  if(!confirm("This will erase EVERYTHING. Continue?"))return;
+  if(!confirm("This will delete ALL progress. Continue?")) return;
   localStorage.clear();
   location.reload();
 }
 
-/* ---------- PROGRESS ---------- */
-
-function updateProgress(){
-  [["physics","pBar","pText"],["chemistry","cBar","cText"],["maths","mBar","mText"]]
-  .forEach(([s,b,t])=>{
-    let done=0;
-    data[s].forEach(c=>localStorage.getItem(s+c)==="1"&&done++);
-    let pct=Math.round(done/data[s].length*100)||0;
-    $(b).style.width=pct+"%";
-    $(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`;
-  });
-}
-
-/* ---------- DAILY GOALS ---------- */
+/* ================= DAILY GOALS ================= */
 
 $("goalInput").addEventListener("keydown",e=>{
-  if(e.key!=="Enter")return;
+  if(e.key!=="Enter") return;
   const v=e.target.value.toLowerCase();
-  if(!v)return;
+  if(!v) return;
   Object.keys(data).forEach(s=>{
     data[s].forEach(c=>{
-      if(c.toLowerCase().includes(v)&&!daily[s].includes(c))
+      if(c.toLowerCase().includes(v) && !daily[s].includes(c))
         daily[s].push(c);
     });
   });
   e.target.value="";
-  save(); renderDaily();
+  save();
+  renderDaily();
 });
 
 function renderDaily(){
   $("dailyGoals").innerHTML="";
   Object.keys(daily).forEach(s=>{
-    if(!daily[s].length)return;
+    if(!daily[s].length) return;
     const title=document.createElement("div");
     title.className="section-title";
     title.innerText=s.toUpperCase();
@@ -398,7 +404,9 @@ function renderDaily(){
       cb.onchange=()=>{
         localStorage.setItem(s+ch,"1");
         daily[s].splice(i,1);
-        save(); renderDaily(); updateProgress();
+        save();
+        renderDaily();
+        updateProgress();
       };
       row.append(name,cb);
       $("dailyGoals").append(row);
@@ -406,8 +414,23 @@ function renderDaily(){
   });
 }
 
-renderDaily();
-updateProgress();
+/* ================= PROGRESS ================= */
+
+function updateProgress(){
+  [["physics","pBar","pText"],["chemistry","cBar","cText"],["maths","mBar","mText"]]
+  .forEach(([s,b,t])=>{
+    let done=0;
+    data[s].forEach(c=>localStorage.getItem(s+c)==="1" && done++);
+    let pct=Math.round(done/data[s].length*100)||0;
+    $(b).style.width=pct+"%";
+    $(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`;
+  });
+}
+
+function save(){
+  localStorage.setItem("jeeData",JSON.stringify(data));
+  localStorage.setItem("jeeDaily",JSON.stringify(daily));
+}
 </script>
 </body>
 </html>
