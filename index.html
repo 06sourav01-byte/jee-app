@@ -5,24 +5,26 @@
 <title>JEE</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:18px}
-header{padding:24px;text-align:center;font-size:28px;font-weight:600;background:#a5b4fc;border-radius:0 0 30px 30px}
-.container{padding:20px}
-.card{background:#ffffff;border-radius:28px;padding:20px;margin-bottom:22px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
-.subject-row{display:flex;gap:16px;margin-top:20px}
-.subject-row button{flex:1;font-size:20px;padding:18px;border-radius:30px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:19px}
+header{padding:26px;text-align:center;font-size:30px;font-weight:600;background:#a5b4fc;border-radius:0 0 34px 34px}
+.container{padding:22px}
+.card{background:#ffffff;border-radius:30px;padding:22px;margin-bottom:26px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
+.subject-row{display:flex;gap:18px;margin:24px 0}
+.subject-row button{flex:1;padding:20px;font-size:22px;border:none;border-radius:34px;font-weight:600;cursor:pointer}
 .physics{background:#c7d2fe}
 .chemistry{background:#bbf7d0}
 .math{background:#e9d5ff}
-.progress{height:18px;background:#e5e7eb;border-radius:12px;overflow:hidden;margin-top:8px}
+.progress{height:18px;background:#e5e7eb;border-radius:12px;overflow:hidden;margin-top:10px}
 .progress div{height:100%;background:#6366f1;width:0%}
-.chapter{display:flex;align-items:center;justify-content:space-between;margin:12px 0}
-.chapter-left{display:flex;align-items:center}
-.chapter input{width:22px;height:22px;margin-right:12px}
-.menu{cursor:pointer;font-size:22px;padding:0 10px}
+.chapter{display:flex;align-items:center;justify-content:space-between;margin:16px 0}
+.chapter span{font-size:20px}
+.chapter input{width:26px;height:26px;border-radius:8px;accent-color:#6366f1;cursor:pointer}
 .hidden{display:none}
-input{width:100%;padding:16px;font-size:18px;border-radius:22px;border:1px solid #d1d5db;margin:12px 0}
-.section-title{font-weight:600;font-size:20px;margin-top:18px}
+input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid #d1d5db;margin:14px 0}
+.section-title{font-weight:600;font-size:22px;margin:18px 0 10px}
+.big-reset{width:100%;padding:22px;font-size:22px;border-radius:36px;border:none;background:linear-gradient(135deg,#fb7185,#f43f5e);color:white;font-weight:600;cursor:pointer;margin-top:28px}
+.back-btn{margin-top:26px;padding:18px;font-size:20px;border-radius:30px;border:none;background:#c7d2fe;cursor:pointer}
 </style>
 </head>
 <body>
@@ -46,47 +48,42 @@ input{width:100%;padding:16px;font-size:18px;border-radius:22px;border:1px solid
 <button class="physics" onclick="openSub('physics')">⚡ Physics</button>
 <button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
 <button class="math" onclick="openSub('maths')">📐 Maths</button>
-</div><button style="background:#fecaca;margin-top:24px" onclick="resetAll()">Reset Progress</button>
+</div><button class="big-reset" onclick="resetAll()">Reset Progress</button>
 
 </div><div class="container hidden" id="subject">
 <h2 id="subTitle"></h2>
 <input id="newChapter" placeholder="Add new chapter">
-<button onclick="addChapter()">Add Chapter</button>
+<button onclick="addChapter()" class="back-btn">Add Chapter</button>
 <div id="chapters"></div>
-<button onclick="goHome()">⬅ Back</button>
+<button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
 </div><script>
-const data=JSON.parse(localStorage.getItem('chaptersData'))||{
+const defaultData={
 physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","Magnetic Effect of Current","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
 chemistry:["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry"],
 maths:["Logarithm","Trigonometric Ratios & Identities","Quadratic Equation","Sequence & Series","Trigonometric Equation","Properties of Triangles","Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR","Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)","AOD","Indefinite Integration","Definite Integration","Area Under Curve","Differential Equation","Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"]};
 
-let currentSub="";
+let data=JSON.parse(localStorage.getItem('chaptersData'))||defaultData;
 let daily=JSON.parse(localStorage.getItem('dailyGoals'))||{physics:[],chemistry:[],maths:[]};
+let currentSub="";
 
 function save(){localStorage.setItem('chaptersData',JSON.stringify(data));localStorage.setItem('dailyGoals',JSON.stringify(daily))}
 
-function openSub(s){currentSub=s;home.classList.add('hidden');subject.classList.remove('hidden');subTitle.innerText=s.toUpperCase();renderChapters()}
+function openSub(s){currentSub=s;document.getElementById('home').classList.add('hidden');document.getElementById('subject').classList.remove('hidden');document.getElementById('subTitle').innerText=s.toUpperCase();renderChapters()}
 
-function renderChapters(){chapters.innerHTML="";data[currentSub].forEach((ch,i)=>{
-let row=document.createElement('div');row.className='chapter';
-let left=document.createElement('div');left.className='chapter-left';
-let cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch);
-cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?1:'');update()};
-left.append(cb,ch);
-let menu=document.createElement('div');menu.className='menu';menu.innerText='⋮';
-menu.onclick=()=>{let a=prompt('Edit chapter name or type DELETE');if(a==='DELETE'){data[currentSub].splice(i,1)}else if(a){data[currentSub][i]=a}save();renderChapters()};
-row.append(left,menu);chapters.append(row)})}
+function renderChapters(){const box=document.getElementById('chapters');box.innerHTML="";data[currentSub].forEach(ch=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch)==='1';cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};row.append(name,cb);box.append(row)})}
 
-function addChapter(){let v=newChapter.value.trim();if(v){data[currentSub].push(v);newChapter.value="";save();renderChapters()}}
+function addChapter(){const v=newChapter.value.trim();if(!v)return;data[currentSub].push(v);newChapter.value='';save();renderChapters();updateProgress()}
 
-goalInput.oninput=function(){let v=this.value.toLowerCase();if(!v)return;Object.keys(data).forEach(s=>{data[s].filter(c=>c.toLowerCase().includes(v)).forEach(ch=>{if(!daily[s].includes(ch)){daily[s].push(ch)}});save();renderDaily()};
+function goHome(){document.getElementById('subject').classList.add('hidden');document.getElementById('home').classList.remove('hidden');updateProgress()}
 
-function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){let t=document.createElement('div');t.className='section-title';t.innerText=s.toUpperCase();dailyGoals.append(t);daily[s].forEach(ch=>{let d=document.createElement('div');d.className='chapter';let cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,1);update()};d.append(cb,ch);dailyGoals.append(d)})}})}
-
-function update(){[['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{let done=0;data[s].forEach(c=>{if(localStorage.getItem(s+c))done++});let pct=Math.round(done/data[s].length*100)||0;document.getElementById(b).style.width=pct+'%';document.getElementById(t).innerText=`${done}/${data[s].length} (${pct}%)`})}
+function updateProgress(){[['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{let done=0;data[s].forEach(c=>{if(localStorage.getItem(s+c)==='1')done++});let pct=Math.round(done/data[s].length*100)||0;document.getElementById(b).style.width=pct+'%';document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`})}
 
 function resetAll(){localStorage.clear();location.reload()}
-function goHome(){subject.classList.add('hidden');home.classList.remove('hidden');update()}
-renderDaily();update();
+
+goalInput.oninput=function(){const v=this.value.toLowerCase();dailyGoals.innerHTML="";if(!v)return;Object.keys(data).forEach(s=>{const matches=data[s].filter(c=>c.toLowerCase().includes(v));if(matches.length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);matches.forEach(ch=>{if(daily[s].includes(ch))return;const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const btn=document.createElement('button');btn.innerText='Add';btn.onclick=()=>{daily[s].push(ch);save();renderDaily()};row.append(name,btn);dailyGoals.append(row)})}})};
+
+function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);daily[s].forEach(ch=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,'1');updateProgress()};row.append(name,cb);dailyGoals.append(row)})}})}
+
+renderDaily();updateProgress();
 </script></body>
 </html>
