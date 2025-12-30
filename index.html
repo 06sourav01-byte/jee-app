@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JEE</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6fb; }
+    header { background: #1e3a8a; color: white; padding: 16px; text-align: center; }
+    .container { padding: 16px; }
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    button { width: 100%; padding: 14px; margin: 8px 0; font-size: 18px; border: none; border-radius: 10px; color: white; }
+    .physics { background: #2563eb; }
+    .chemistry { background: #16a34a; }
+    .math { background: #7c3aed; }
+    .hidden { display: none; }
+    .chapter { display: flex; align-items: center; margin: 8px 0; }
+    .chapter input { width: 20px; height: 20px; margin-right: 12px; }
+    progress { width: 100%; height: 18px; }
+  </style>
+</head>
+<body>
+  <header>JEE – Study Tracker</header>  <div class="container" id="home">
+    <div class="card">
+      <p>Physics Progress</p>
+      <progress id="pProg" value="0" max="100"></progress>
+    </div>
+    <div class="card">
+      <p>Chemistry Progress</p>
+      <progress id="cProg" value="0" max="100"></progress>
+    </div>
+    <div class="card">
+      <p>Math Progress</p>
+      <progress id="mProg" value="0" max="100"></progress>
+    </div><button class="physics" onclick="openSub('physics')">Physics</button>
+<button class="chemistry" onclick="openSub('chemistry')">Chemistry</button>
+<button class="math" onclick="openSub('math')">Mathematics</button>
+
+<button style="background:#dc2626" onclick="resetAll()">Reset Progress</button>
+
+  </div>  <div class="container hidden" id="subject">
+    <h2 id="subTitle"></h2>
+    <div id="chapters"></div>
+    <button style="background:#374151" onclick="goHome()">Back</button>
+  </div><script>
+const data = {
+  physics: ['Kinematics','Laws of Motion','Work Energy Power'],
+  chemistry: ['Atomic Structure','Thermodynamics','Equilibrium'],
+  math: ['Limits','Derivatives','Integrals']
+};
+
+function openSub(sub){
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('subject').classList.remove('hidden');
+  document.getElementById('subTitle').innerText = sub.toUpperCase();
+  const box = document.getElementById('chapters'); box.innerHTML='';
+  data[sub].forEach(ch=>{
+    const div = document.createElement('div'); div.className='chapter';
+    const cb = document.createElement('input'); cb.type='checkbox';
+    cb.checked = localStorage.getItem(sub+ch)==='1';
+    cb.onchange=()=>{ localStorage.setItem(sub+ch, cb.checked?'1':'0'); updateProgress(); };
+    const label = document.createElement('span'); label.innerText = ch;
+    div.appendChild(cb); div.appendChild(label); box.appendChild(div);
+  });
+}
+
+function goHome(){ document.getElementById('subject').classList.add('hidden'); document.getElementById('home').classList.remove('hidden'); updateProgress(); }
+
+function updateProgress(){
+  ['physics','chemistry','math'].forEach((s,i)=>{
+    let done=0; data[s].forEach(ch=>{ if(localStorage.getItem(s+ch)==='1') done++; });
+    let pct = Math.round(done/data[s].length*100);
+    document.getElementById(['pProg','cProg','mProg'][i]).value=pct;
+  });
+}
+
+function resetAll(){ localStorage.clear(); updateProgress(); }
+updateProgress();
+</script></body>
+</html>
