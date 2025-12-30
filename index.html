@@ -60,28 +60,7 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 <button class="math" onclick="openSub('maths')">📐 Maths</button>
 </div><button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
 
-</div><div class="container hidden" id="subject">
-<div class="top-bar">
-<h2 id="subTitle"></h2>
-<div class="menu" onclick="openMenu()">⋮</div>
-</div>
-<div id="chapters"></div>
-<button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
-</div><!-- MODALS --><div class="modal hidden" id="addModal">
-<div class="modal-box">
-<h3>Add Chapter</h3>
-<input id="addInput" placeholder="Chapter name">
-<button onclick="confirmAdd()">Add</button>
-<button onclick="closeModals()">Cancel</button>
-</div>
-</div><div class="modal hidden" id="removeModal">
-<div class="modal-box">
-<h3>Remove Chapters</h3>
-<div class="remove-list" id="removeList"></div>
-<button onclick="confirmRemove()">Remove Selected</button>
-<button onclick="closeModals()">Cancel</button>
-</div>
-</div><script>
+<script>
 const defaultData={
 physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","Magnetic Effect of Current","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
 chemistry:["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry"],
