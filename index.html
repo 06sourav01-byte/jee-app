@@ -24,7 +24,8 @@ header{padding:26px;text-align:center;font-size:30px;font-weight:600;background:
 input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid #d1d5db;margin:14px 0}
 .section-title{font-weight:600;font-size:22px;margin:18px 0 10px}
 .big-reset{width:100%;padding:22px;font-size:22px;border-radius:36px;border:none;background:linear-gradient(135deg,#fb7185,#f43f5e);color:white;font-weight:600;cursor:pointer;margin-top:28px}
-.back-btn{margin-top:26px;padding:18px;font-size:20px;border-radius:30px;border:none;background:#c7d2fe;cursor:pointer}
+.small-btn{padding:10px 16px;border:none;border-radius:20px;background:#e5e7eb;cursor:pointer;font-size:16px}
+.back-btn{margin-top:26px;padding:18px;font-size:20px;border-radius:30px;border:none;background:#c7d2fe;cursor:pointer;width:100%}
 </style>
 </head>
 <body>
@@ -36,24 +37,27 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 <b>⚡ Physics</b>
 <div class="progress"><div id="pBar"></div></div>
 <div id="pText"></div>
+<button class="small-btn" onclick="resetSubject('physics')">Reset Physics</button>
 </div><div class="card">
 <b>🧪 Chemistry</b>
 <div class="progress"><div id="cBar"></div></div>
 <div id="cText"></div>
+<button class="small-btn" onclick="resetSubject('chemistry')">Reset Chemistry</button>
 </div><div class="card">
 <b>📐 Mathematics</b>
 <div class="progress"><div id="mBar"></div></div>
 <div id="mText"></div>
+<button class="small-btn" onclick="resetSubject('maths')">Reset Maths</button>
 </div><div class="subject-row">
 <button class="physics" onclick="openSub('physics')">⚡ Physics</button>
 <button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
 <button class="math" onclick="openSub('maths')">📐 Maths</button>
-</div><button class="big-reset" onclick="resetAll()">Reset Progress</button>
+</div><button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
 
 </div><div class="container hidden" id="subject">
 <h2 id="subTitle"></h2>
 <input id="newChapter" placeholder="Add new chapter">
-<button onclick="addChapter()" class="back-btn">Add Chapter</button>
+<button onclick="addChapter()" class="small-btn">Add Chapter</button>
 <div id="chapters"></div>
 <button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
 </div><script>
@@ -68,21 +72,24 @@ let currentSub="";
 
 function save(){localStorage.setItem('chaptersData',JSON.stringify(data));localStorage.setItem('dailyGoals',JSON.stringify(daily))}
 
-function openSub(s){currentSub=s;document.getElementById('home').classList.add('hidden');document.getElementById('subject').classList.remove('hidden');document.getElementById('subTitle').innerText=s.toUpperCase();renderChapters()}
+function openSub(s){currentSub=s;home.classList.add('hidden');subject.classList.remove('hidden');subTitle.innerText=s.toUpperCase();renderChapters()}
 
-function renderChapters(){const box=document.getElementById('chapters');box.innerHTML="";data[currentSub].forEach(ch=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch)==='1';cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};row.append(name,cb);box.append(row)})}
+function renderChapters(){const box=document.getElementById('chapters');box.innerHTML="";data[currentSub].forEach((ch,i)=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch)==='1';cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};const del=document.createElement('button');del.className='small-btn';del.innerText='Remove';del.onclick=()=>{data[currentSub].splice(i,1);save();renderChapters();updateProgress()};row.append(name,cb,del);box.append(row)})}
 
 function addChapter(){const v=newChapter.value.trim();if(!v)return;data[currentSub].push(v);newChapter.value='';save();renderChapters();updateProgress()}
 
-function goHome(){document.getElementById('subject').classList.add('hidden');document.getElementById('home').classList.remove('hidden');updateProgress()}
+function goHome(){subject.classList.add('hidden');home.classList.remove('hidden');updateProgress()}
 
 function updateProgress(){[['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{let done=0;data[s].forEach(c=>{if(localStorage.getItem(s+c)==='1')done++});let pct=Math.round(done/data[s].length*100)||0;document.getElementById(b).style.width=pct+'%';document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`})}
 
+function resetSubject(s){data[s].forEach(c=>localStorage.removeItem(s+c));updateProgress()}
 function resetAll(){localStorage.clear();location.reload()}
 
-goalInput.oninput=function(){const v=this.value.toLowerCase();dailyGoals.innerHTML="";if(!v)return;Object.keys(data).forEach(s=>{const matches=data[s].filter(c=>c.toLowerCase().includes(v));if(matches.length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);matches.forEach(ch=>{if(daily[s].includes(ch))return;const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const btn=document.createElement('button');btn.innerText='Add';btn.onclick=()=>{daily[s].push(ch);save();renderDaily()};row.append(name,btn);dailyGoals.append(row)})}})};
+// DAILY GOALS
 
-function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);daily[s].forEach(ch=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,'1');updateProgress()};row.append(name,cb);dailyGoals.append(row)})}})}
+goalInput.oninput=function(){const v=this.value.toLowerCase();if(!v)return;Object.keys(data).forEach(s=>{data[s].filter(c=>c.toLowerCase().includes(v)&&!daily[s].includes(c)).forEach(c=>{daily[s].push(c)})});save();renderDaily()}
+
+function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);daily[s].forEach((ch,i)=>{const row=document.createElement('div');row.className='chapter';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,'1');daily[s].splice(i,1);save();renderDaily();updateProgress()};row.append(name,cb);dailyGoals.append(row)})}})}
 
 renderDaily();updateProgress();
 </script></body>
