@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEE</title>
+<title>JEE Study Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6366f1">
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:19px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Poppins,sans-serif;background:#f5f7fb;color:#1f2937;font-size:19px}
 header{padding:26px;text-align:center;font-size:30px;font-weight:600;background:#a5b4fc;border-radius:0 0 34px 34px}
 .container{padding:22px}
 .card{background:#ffffff;border-radius:30px;padding:22px;margin-bottom:26px;box-shadow:0 14px 34px rgba(0,0,0,.08)}
@@ -29,110 +29,174 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 .chapter-row span{font-size:20px}
 .chapter-row input{width:26px;height:26px;border-radius:8px;accent-color:#6366f1}
 .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.menu{font-size:26px;cursor:pointer;padding:6px}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:10}
-.modal-box{background:white;border-radius:28px;padding:22px;width:90%;max-width:420px}
-.modal h3{margin-top:0}
-.modal button{margin-top:12px;padding:14px;font-size:18px;border-radius:22px;border:none;cursor:pointer;width:100%}
-.remove-list{max-height:300px;overflow:auto;margin-top:10px}
+canvas{margin-top:20px}
 </style>
 </head>
 <body>
 <header>📘 JEE Study Tracker</header>
+
 <div class="container" id="home">
-<div class="card">
-<div class="section-title">🎯 Daily Goals</div>
-<input id="goalInput" placeholder="Type chapter name">
-<div id="dailyGoals"></div>
-</div>
-<div class="card">
-<b>⚡ Physics</b>
-<div class="progress"><div id="pBar"></div></div>
-<div id="pText"></div>
-<button onclick="resetSubject('physics')">Reset Physics</button>
-</div>
-<div class="card">
-<b>🧪 Chemistry</b>
-<div class="progress"><div id="cBar"></div></div>
-<div id="cText"></div>
-<button onclick="resetSubject('chemistry')">Reset Chemistry</button>
-</div>
-<div class="card">
-<b>📐 Mathematics</b>
-<div class="progress"><div id="mBar"></div></div>
-<div id="mText"></div>
-<button onclick="resetSubject('maths')">Reset Maths</button>
-</div>
-<div class="subject-row">
-<button class="physics" onclick="openSub('physics')">⚡ Physics</button>
-<button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
-<button class="math" onclick="openSub('maths')">📐 Maths</button>
-</div>
-<button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
-</div>
-<div class="container hidden" id="subject">
-<div class="top-bar">
-<h2 id="subTitle"></h2>
-<div class="menu" onclick="openMenu()">⋮</div>
-</div>
-<div id="chapters"></div>
-<button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
+  <div class="card">
+    <div class="section-title">🎯 Daily Goals</div>
+    <input id="goalInput" placeholder="Type chapter name">
+    <div id="dailyGoals"></div>
+  </div>
+
+  <div class="card">
+    <b>⚡ Physics</b>
+    <div class="progress"><div id="pBar"></div></div>
+    <div id="pText"></div>
+    <button onclick="resetSubject('physics')">Reset Physics</button>
+  </div>
+
+  <div class="card">
+    <b>🧪 Chemistry</b>
+    <div class="progress"><div id="cBar"></div></div>
+    <div id="cText"></div>
+    <button onclick="resetSubject('chemistry')">Reset Chemistry</button>
+  </div>
+
+  <div class="card">
+    <b>📐 Mathematics</b>
+    <div class="progress"><div id="mBar"></div></div>
+    <div id="mText"></div>
+    <button onclick="resetSubject('maths')">Reset Maths</button>
+  </div>
+
+  <div class="subject-row">
+    <button class="physics" onclick="openSub('physics')">⚡ Physics</button>
+    <button class="chemistry" onclick="openSub('chemistry')">🧪 Chemistry</button>
+    <button class="math" onclick="openSub('maths')">📐 Maths</button>
+  </div>
+
+  <button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
 </div>
 
-<!-- MODALS -->
-<div class="modal hidden" id="addModal">
-<div class="modal-box">
-<h3>Add Chapter</h3>
-<input id="addInput" placeholder="Chapter name">
-<button onclick="confirmAdd()">Add</button>
-<button onclick="closeModals()">Cancel</button>
-</div>
-</div>
-<div class="modal hidden" id="removeModal">
-<div class="modal-box">
-<h3>Remove Chapters</h3>
-<div class="remove-list" id="removeList"></div>
-<button onclick="confirmRemove()">Remove Selected</button>
-<button onclick="closeModals()">Cancel</button>
-</div>
+<div class="container hidden" id="subject">
+  <div class="top-bar">
+    <h2 id="subTitle"></h2>
+  </div>
+  <div id="chapters"></div>
+  <button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
 </div>
 
 <script>
+// Complete chapter data with numbering
 const defaultData={
 physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","MEC","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
 chemistry:["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry","Optical Isomerism","Halogen Derivative","Alcohol, Phenol, Ether","Aldehydes, Ketones","Carboxylic Acids & Amines","Biomolecules","Polymers","Oxidation Reduction","Chem. in Everyday Life"],
-maths:["Logarithm","Trigonometric Ratios & Identities","Quadratic Equation","Sequence & Series","Trigonometric Equation","Properties of Triangles","Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR","Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)","AOD","Indefinite Integration","Definite Integration","Area Under Curve","Differential Equation","Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"]};
+maths:["Logarithm","Trigonometric Ratios & Identities","Quadratic Equation","Sequence & Series","Trigonometric Equation","Properties of Triangles","Height and Distance","Point","Straight Line","Circle","Parabola","Ellipse","Hyperbola","P & C","Binomial Theorem","Complex Number","Statistics","PMI","MR","Sets","Relation","Function","ITF","Limit","Continuity","Differentiability","MOD (Diff.)","AOD","Indefinite Integration","Definite Integration","Area Under Curve","Differential Equation","Matrices","Determinant","Vectors","3-Dimensional","Probability","Linear Programming"]
+};
 
 let data=JSON.parse(localStorage.getItem('chaptersData'))||defaultData;
-let daily=JSON.parse(localStorage.getItem('dailyGoals'))||{physics:[],chemistry:[],maths:[]};
+let daily={physics:[],chemistry:[],maths:[]};
 let currentSub="";
 
-function save(){localStorage.setItem('chaptersData',JSON.stringify(data));localStorage.setItem('dailyGoals',JSON.stringify(daily))}
+function save(){localStorage.setItem('chaptersData',JSON.stringify(data))}
 
-function openSub(s){currentSub=s;home.classList.add('hidden');subject.classList.remove('hidden');subTitle.innerText=s.toUpperCase();renderChapters()}
+function openSub(s){
+  currentSub=s;
+  home.classList.add('hidden');
+  subject.classList.remove('hidden');
+  subTitle.innerText=s.toUpperCase();
+  renderChapters();
+}
 
-function renderChapters(){const box=document.getElementById('chapters');box.innerHTML="";data[currentSub].forEach(ch=>{const row=document.createElement('div');row.className='chapter-row';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.checked=localStorage.getItem(currentSub+ch)==='1';cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};row.append(name,cb);box.append(row)})}
+function renderChapters(){
+  const box=document.getElementById('chapters');
+  box.innerHTML="";
+  data[currentSub].forEach((ch,i)=>{
+    const row=document.createElement('div');
+    row.className='chapter-row';
+    const name=document.createElement('span');
+    name.innerText=`${i+1}. ${ch}`;
+    const cb=document.createElement('input');
+    cb.type='checkbox';
+    cb.checked=localStorage.getItem(currentSub+ch)==='1';
+    cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};
+    row.append(name,cb);
+    box.append(row);
+  });
+}
 
-function openMenu(){document.getElementById('addModal').classList.remove('hidden');}
-function closeModals(){addModal.classList.add('hidden');removeModal.classList.add('hidden')}
+function goHome(){
+  subject.classList.add('hidden');
+  home.classList.remove('hidden');
+  updateProgress();
+}
 
-function confirmAdd(){const v=addInput.value.trim();if(!v)return;data[currentSub].push(v);addInput.value='';save();closeModals();renderChapters();updateProgress()}
-function openRemove(){removeList.innerHTML="";data[currentSub].forEach((ch,i)=>{const row=document.createElement('div');const cb=document.createElement('input');cb.type='checkbox';cb.dataset.index=i;row.append(cb,ch);removeList.append(row)});removeModal.classList.remove('hidden')}
-function confirmRemove(){const checks=[...removeList.querySelectorAll('input:checked')].map(c=>+c.dataset.index).sort((a,b)=>b-a);checks.forEach(i=>data[currentSub].splice(i,1));save();closeModals();renderChapters();updateProgress()}
-function goHome(){subject.classList.add('hidden');home.classList.remove('hidden');updateProgress()}
+function updateProgress(){
+  [['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{
+    let done=0;
+    data[s].forEach(c=>{if(localStorage.getItem(s+c)==='1')done++});
+    let pct=Math.round(done/data[s].length*100)||0;
+    document.getElementById(b).style.width=pct+'%';
+    document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`
+  });
+}
 
-function updateProgress(){[['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{let done=0;data[s].forEach(c=>{if(localStorage.getItem(s+c)==='1')done++});let pct=Math.round(done/data[s].length*100)||0;document.getElementById(b).style.width=pct+'%';document.getElementById(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`})}
+function resetSubject(s){
+  if(confirm(`Are you sure you want to reset ${s.toUpperCase()} progress?`)){
+    data[s].forEach(c=>localStorage.removeItem(s+c));
+    updateProgress();
+  }
+}
 
-function resetSubject(s){data[s].forEach(c=>localStorage.removeItem(s+c));updateProgress()}
-function resetAll(){if(confirm("Are you sure you want to reset all progress?")){localStorage.clear();location.reload()}}
+function resetAll(){
+  if(confirm("Are you sure you want to reset all progress?")){
+    localStorage.clear();
+    location.reload();
+  }
+}
 
-// DAILY GOALS
-goalInput.oninput=function(){const v=this.value.toLowerCase();daily={physics:[],chemistry:[],maths:[]};if(!v)return;Object.keys(data).forEach(s=>{data[s].forEach(c=>{if(c.toLowerCase().includes(v))daily[s].push(c)})});renderDaily()}
-function renderDaily(){dailyGoals.innerHTML="";Object.keys(daily).forEach(s=>{if(daily[s].length){const title=document.createElement('div');title.className='section-title';title.innerText=s.toUpperCase();dailyGoals.append(title);daily[s].forEach((ch,i)=>{const row=document.createElement('div');row.className='chapter-row';const name=document.createElement('span');name.innerText=ch;const cb=document.createElement('input');cb.type='checkbox';cb.onchange=()=>{localStorage.setItem(s+ch,'1');daily[s].splice(i,1);renderDaily();updateProgress()};row.append(name,cb);dailyGoals.append(row)})}})}
-renderDaily();updateProgress();
+// Daily Goals
+goalInput.oninput=function(){
+  const v=this.value.toLowerCase();
+  daily={physics:[],chemistry:[],maths:[]};
+  if(!v)return;
+  Object.keys(data).forEach(s=>{
+    data[s].forEach(c=>{
+      if(c.toLowerCase().includes(v)) daily[s].push(c);
+    });
+  });
+  renderDaily();
+}
 
-// REGISTER SERVICE WORKER
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>console.log('Service Worker Registered'))}
+function renderDaily(){
+  dailyGoals.innerHTML="";
+  Object.keys(daily).forEach(s=>{
+    if(daily[s].length){
+      const title=document.createElement('div');
+      title.className='section-title';
+      title.innerText=s.toUpperCase();
+      dailyGoals.append(title);
+      daily[s].forEach((ch,i)=>{
+        const row=document.createElement('div');
+        row.className='chapter-row';
+        const name=document.createElement('span');
+        name.innerText=ch;
+        const cb=document.createElement('input');
+        cb.type='checkbox';
+        cb.onchange=()=>{
+          localStorage.setItem(s+ch,'1');
+          daily[s].splice(i,1);
+          renderDaily();
+          updateProgress();
+        };
+        row.append(name,cb);
+        dailyGoals.append(row);
+      });
+    }
+  });
+}
+
+renderDaily();
+updateProgress();
+
+// Service Worker registration for PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>console.log('Service Worker Registered'));
+}
 </script>
 </body>
 </html>
