@@ -70,6 +70,8 @@ canvas{margin-top:20px}
   </div>
 
   <button class="big-reset" onclick="resetAll()">Reset ALL Progress</button>
+
+  <canvas id="subjectChart" width="400" height="200"></canvas>
 </div>
 
 <div class="container hidden" id="subject">
@@ -80,8 +82,9 @@ canvas{margin-top:20px}
   <button onclick="goHome()" class="back-btn">⬅ Back to Home</button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Complete chapter data with numbering
+// Chapter data
 const defaultData={
 physics:["U & D","Vectors","Kinematics-1D","Kinematics-2D","NLM","Friction","Circular motion","WPE","Center of Mass","Rotational Mechanics","Gravitation","SHM","Calorimetry","Elasticity","Thermal Expansion","Heat transfer","KTG","Thermodynamics","Wave on string","Sound waves","Fluid Mechanics","Physical World","Electrostatics","Current Electricity","Capacitance","MEC","Magnetism","EMI","AC","Atomic Structure","Dual Nature","Nuclear physics","Radioactivity","Ray Optics","EM Waves","Wave Optics","Errors","Semiconductor","Communication System"],
 chemistry:["General Chemistry","Atomic Structure","States of Matter","Thermodynamics","Chemical Equilibrium","Redox Reaction","Ionic Equilibrium","Mole Concept","Thermochemistry","The Solid State","Liquid Solution","Chemical Kinetics","Nuclear Chemistry","Radioactivity","Electro Chemistry","Surface Chemistry","Periodic Table","Chemical Bonding","Hydrogen","s-Block Elements","p-Block Elements","Metallurgy","d & f Block","Coordination Compounds","Salt Analysis","IUPAC","GOC","Isomerism","Hydrocarbons","Environmental Chemistry","Optical Isomerism","Halogen Derivative","Alcohol, Phenol, Ether","Aldehydes, Ketones","Carboxylic Acids & Amines","Biomolecules","Polymers","Oxidation Reduction","Chem. in Everyday Life"],
@@ -92,8 +95,10 @@ let data=JSON.parse(localStorage.getItem('chaptersData'))||defaultData;
 let daily={physics:[],chemistry:[],maths:[]};
 let currentSub="";
 
+// Save
 function save(){localStorage.setItem('chaptersData',JSON.stringify(data))}
 
+// Open subject
 function openSub(s){
   currentSub=s;
   home.classList.add('hidden');
@@ -102,6 +107,7 @@ function openSub(s){
   renderChapters();
 }
 
+// Render chapters with numbering
 function renderChapters(){
   const box=document.getElementById('chapters');
   box.innerHTML="";
@@ -113,18 +119,21 @@ function renderChapters(){
     const cb=document.createElement('input');
     cb.type='checkbox';
     cb.checked=localStorage.getItem(currentSub+ch)==='1';
-    cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress()};
+    cb.onchange=()=>{localStorage.setItem(currentSub+ch,cb.checked?'1':'');updateProgress(); renderChart();}
     row.append(name,cb);
     box.append(row);
   });
 }
 
+// Go back home
 function goHome(){
   subject.classList.add('hidden');
   home.classList.remove('hidden');
   updateProgress();
+  renderChart();
 }
 
+// Update progress bars
 function updateProgress(){
   [['physics','pBar','pText'],['chemistry','cBar','cText'],['maths','mBar','mText']].forEach(([s,b,t])=>{
     let done=0;
@@ -135,13 +144,16 @@ function updateProgress(){
   });
 }
 
+// Reset subject
 function resetSubject(s){
   if(confirm(`Are you sure you want to reset ${s.toUpperCase()} progress?`)){
     data[s].forEach(c=>localStorage.removeItem(s+c));
     updateProgress();
+    renderChart();
   }
 }
 
+// Reset all
 function resetAll(){
   if(confirm("Are you sure you want to reset all progress?")){
     localStorage.clear();
@@ -149,11 +161,11 @@ function resetAll(){
   }
 }
 
-// Daily Goals
+// Daily goals autocomplete
 goalInput.oninput=function(){
   const v=this.value.toLowerCase();
   daily={physics:[],chemistry:[],maths:[]};
-  if(!v)return;
+  if(!v) return;
   Object.keys(data).forEach(s=>{
     data[s].forEach(c=>{
       if(c.toLowerCase().includes(v)) daily[s].push(c);
@@ -182,6 +194,7 @@ function renderDaily(){
           daily[s].splice(i,1);
           renderDaily();
           updateProgress();
+          renderChart();
         };
         row.append(name,cb);
         dailyGoals.append(row);
@@ -190,10 +203,38 @@ function renderDaily(){
   });
 }
 
-renderDaily();
-updateProgress();
+// Subject-wise completion chart
+function renderChart(){
+  const ctx = document.getElementById('subjectChart').getContext('2d');
+  const doneCounts = ['physics','chemistry','maths'].map(s=>{
+    return data[s].filter(c=>localStorage.getItem(s+c)==='1').length;
+  });
+  const totalCounts = ['physics','chemistry','maths'].map(s=>data[s].length);
+  if(window.myChart) window.myChart.destroy();
+  window.myChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:['Physics','Chemistry','Maths'],
+      datasets:[{
+        label:'Chapters Completed',
+        data:doneCounts,
+        backgroundColor:['#c7d2fe','#bbf7d0','#e9d5ff']
+      },{
+        label:'Remaining Chapters',
+        data:totalCounts.map((t,i)=>t-doneCounts[i]),
+        backgroundColor:'#e5e7eb'
+      }]
+    },
+    options:{responsive:true,plugins:{legend:{position:'top'}}}
+  });
+}
 
-// Service Worker registration for PWA
+// Initial render
+updateProgress();
+renderDaily();
+renderChart();
+
+// Service worker registration
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').then(()=>console.log('Service Worker Registered'));
 }
