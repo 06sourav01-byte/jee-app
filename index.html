@@ -35,6 +35,11 @@ input{width:100%;padding:18px;font-size:19px;border-radius:26px;border:1px solid
 </style>
 </head>
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 <body>
 <header>📘 JEE Study Tracker</header>
 
