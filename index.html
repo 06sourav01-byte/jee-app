@@ -97,10 +97,6 @@ input{
   align-items:center;
   margin-bottom:20px
 }
-.menu{
-  font-size:28px;
-  cursor:pointer;
-}
 
 button{
   cursor:pointer;
@@ -118,33 +114,6 @@ button{
   font-weight:600;
 }
 
-/* MODALS */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:20
-}
-.modal-box{
-  background:white;
-  border-radius:26px;
-  padding:22px;
-  width:90%;
-  max-width:420px
-}
-.modal-box button{
-  width:100%;
-  margin-top:10px;
-  padding:14px;
-  font-size:18px;
-  border-radius:20px;
-  border:none
-}
-.menu-btn{background:#e5e7eb}
-.danger{background:#fb7185;color:white}
 .small-btn{
   padding:12px;
   font-size:16px;
@@ -164,6 +133,7 @@ button{
 
 <!-- HOME -->
 <div class="container" id="home">
+
   <div class="card">
     <div class="section-title">🎯 Daily Goals</div>
     <input id="goalInput" placeholder="Type chapter & press Enter">
@@ -201,52 +171,32 @@ button{
 <div class="container hidden" id="subject">
   <div class="top-bar">
     <h2 id="subTitle"></h2>
-    <div class="menu" onclick="openMenu()">⋮</div>
   </div>
   <div id="chapters"></div>
   <button class="small-btn" onclick="goHome()">⬅ Back to Home</button>
 </div>
 
-<!-- MENU MODAL -->
-<div class="modal hidden" id="menuModal">
-  <div class="modal-box">
-    <button class="menu-btn" onclick="openAdd()">➕ Add Chapter</button>
-    <button class="menu-btn" onclick="openRemove()">❌ Remove Chapters</button>
-    <button class="danger" onclick="resetSubject()">♻ Reset Subject</button>
-    <button onclick="closeModals()">Cancel</button>
-  </div>
-</div>
-
-<!-- ADD MODAL -->
-<div class="modal hidden" id="addModal">
-  <div class="modal-box">
-    <h3>Add Chapter</h3>
-    <input id="addInput" placeholder="Chapter name">
-    <button onclick="confirmAdd()">Add</button>
-    <button onclick="closeModals()">Cancel</button>
-  </div>
-</div>
-
-<!-- REMOVE MODAL -->
-<div class="modal hidden" id="removeModal">
-  <div class="modal-box">
-    <h3>Remove Chapters</h3>
-    <div id="removeList"></div>
-    <button class="danger" onclick="confirmRemove()">Remove Selected</button>
-    <button onclick="closeModals()">Cancel</button>
-  </div>
-</div>
-
 <script>
 /* ================= DATA ================= */
 
-const DEFAULT_DATA={
-physics:["Vectors","Kinematics","NLM","Work Power Energy","Rotation","Gravitation","Thermodynamics","Waves","Electrostatics","Current Electricity","Magnetism","Optics","Modern Physics"],
-chemistry:["Mole Concept","Atomic Structure","Thermodynamics","Equilibrium","Electrochemistry","Periodic Table","Chemical Bonding","GOC","Hydrocarbons"],
-maths:["Quadratic","Sequence & Series","Trigonometry","Straight Line","Circle","Conics","Limits","Derivatives","Integrals","Vectors","3D","Probability"]
+const DATA={
+physics:[
+  "Units & Dimensions","Vectors","Kinematics","NLM","Work Power Energy",
+  "Rotational Mechanics","Gravitation","Thermodynamics","Waves",
+  "Electrostatics","Current Electricity","Magnetism","EMI","Optics","Modern Physics"
+],
+chemistry:[
+  "Mole Concept","Atomic Structure","States of Matter","Thermodynamics",
+  "Chemical Equilibrium","Electrochemistry","Periodic Table",
+  "Chemical Bonding","GOC","Hydrocarbons"
+],
+maths:[
+  "Quadratic Equation","Sequence & Series","Trigonometry","Straight Line",
+  "Circle","Conic Sections","Limits","Continuity","Differentiation",
+  "Integration","Vectors","3D Geometry","Probability"
+]
 };
 
-let data=JSON.parse(localStorage.getItem("jeeData"))||DEFAULT_DATA;
 let daily=JSON.parse(localStorage.getItem("jeeDaily"))||{physics:[],chemistry:[],maths:[]};
 let currentSub=null;
 
@@ -255,7 +205,6 @@ const $=id=>document.getElementById(id);
 /* ================= INIT ================= */
 
 window.addEventListener("load",()=>{
-  closeModals();
   updateProgress();
   renderDaily();
 });
@@ -274,7 +223,6 @@ function goHome(){
   currentSub=null;
   $("subject").classList.add("hidden");
   $("home").classList.remove("hidden");
-  closeModals();
   updateProgress();
 }
 
@@ -283,7 +231,7 @@ function goHome(){
 function renderChapters(){
   const box=$("chapters");
   box.innerHTML="";
-  data[currentSub].forEach(ch=>{
+  DATA[currentSub].forEach(ch=>{
     const row=document.createElement("div");
     row.className="chapter-row";
     const name=document.createElement("span");
@@ -300,83 +248,14 @@ function renderChapters(){
   });
 }
 
-/* ================= MENU ================= */
-
-function openMenu(){
-  if(!currentSub) return;
-  $("menuModal").classList.remove("hidden");
-}
-
-function openAdd(){
-  closeModals();
-  $("addModal").classList.remove("hidden");
-}
-
-function openRemove(){
-  closeModals();
-  const list=$("removeList");
-  list.innerHTML="";
-  data[currentSub].forEach((ch,i)=>{
-    const row=document.createElement("div");
-    const cb=document.createElement("input");
-    cb.type="checkbox";
-    cb.dataset.i=i;
-    row.append(cb," ",ch);
-    list.append(row);
-  });
-  $("removeModal").classList.remove("hidden");
-}
-
-function closeModals(){
-  ["menuModal","addModal","removeModal"].forEach(id=>$(id).classList.add("hidden"));
-}
-
-/* ================= ACTIONS ================= */
-
-function confirmAdd(){
-  const v=$("addInput").value.trim();
-  if(!v) return;
-  data[currentSub].push(v);
-  $("addInput").value="";
-  save();
-  closeModals();
-  renderChapters();
-  updateProgress();
-}
-
-function confirmRemove(){
-  [...$("removeList").querySelectorAll("input:checked")]
-  .map(c=>+c.dataset.i)
-  .sort((a,b)=>b-a)
-  .forEach(i=>data[currentSub].splice(i,1));
-  save();
-  closeModals();
-  renderChapters();
-  updateProgress();
-}
-
-function resetSubject(){
-  if(!confirm("Reset all progress for this subject?")) return;
-  data[currentSub].forEach(c=>localStorage.removeItem(currentSub+c));
-  closeModals();
-  renderChapters();
-  updateProgress();
-}
-
-function resetAll(){
-  if(!confirm("This will delete ALL progress. Continue?")) return;
-  localStorage.clear();
-  location.reload();
-}
-
 /* ================= DAILY GOALS ================= */
 
 $("goalInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
   const v=e.target.value.toLowerCase();
   if(!v) return;
-  Object.keys(data).forEach(s=>{
-    data[s].forEach(c=>{
+  Object.keys(DATA).forEach(s=>{
+    DATA[s].forEach(c=>{
       if(c.toLowerCase().includes(v) && !daily[s].includes(c))
         daily[s].push(c);
     });
@@ -420,15 +299,22 @@ function updateProgress(){
   [["physics","pBar","pText"],["chemistry","cBar","cText"],["maths","mBar","mText"]]
   .forEach(([s,b,t])=>{
     let done=0;
-    data[s].forEach(c=>localStorage.getItem(s+c)==="1" && done++);
-    let pct=Math.round(done/data[s].length*100)||0;
+    DATA[s].forEach(c=>localStorage.getItem(s+c)==="1" && done++);
+    let pct=Math.round(done/DATA[s].length*100)||0;
     $(b).style.width=pct+"%";
-    $(t).innerText=`${done}/${data[s].length} chapters (${pct}%)`;
+    $(t).innerText=`${done}/${DATA[s].length} chapters (${pct}%)`;
   });
 }
 
+/* ================= RESET ================= */
+
+function resetAll(){
+  if(!confirm("This will delete ALL progress. Continue?")) return;
+  localStorage.clear();
+  location.reload();
+}
+
 function save(){
-  localStorage.setItem("jeeData",JSON.stringify(data));
   localStorage.setItem("jeeDaily",JSON.stringify(daily));
 }
 </script>
