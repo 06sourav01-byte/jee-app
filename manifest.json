@@ -1,11 +1,11 @@
 {
-  "name": "JEE Progress Tracker",
+  "name": "JEE Study Tracker",
   "short_name": "JEE Tracker",
-  "start_url": ".",
+  "description": "Track your JEE chapters and daily goals",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#f5f7fb",
   "theme_color": "#6366f1",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
